@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>nukenote</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Varela+Round&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              gray: {
+                750: '#2d3748',
+                850: '#1a202c',
+                950: '#0d1117',
+              },
+              primary: {
+                500: 'var(--primary-500)', 
+                600: 'var(--primary-600)',
+                900: 'var(--primary-900)',
+              },
+              // Add a semantic surface color that adapts to themes
+              surface: 'var(--surface-bg)', 
+            },
+            boxShadow: {
+              'glow': '0 0 25px 5px var(--glow-color)',
+              'glow-hover': '0 0 35px 8px var(--glow-color)',
+            },
+            fontFamily: {
+              titan: ['"Titan One"', 'cursive'],
+              varela: ['"Varela Round"', 'sans-serif'],
+            },
+            animation: {
+              'slide-up': 'slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+              'pop-in': 'popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards',
+              'fade-out': 'fadeOut 0.5s ease-out forwards',
+              'intro-scale': 'introScale 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
+              'smooth-bounce': 'smoothBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+            },
+            keyframes: {
+              slideUp: {
+                '0%': { transform: 'translate(-50%, 150%) scale(0.5)', opacity: '0' },
+                '100%': { transform: 'translate(-50%, 0) scale(1)', opacity: '1' },
+              },
+              popIn: {
+                '0%': { transform: 'scale(0.5)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' },
+              },
+              introScale: {
+                '0%': { transform: 'scale(0.9)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' },
+              },
+              fadeOut: {
+                '0%': { opacity: '1' },
+                '100%': { opacity: '0', pointerEvents: 'none' },
+              },
+              smoothBounce: {
+                '0%': { transform: 'scale(0.8) translateY(10px)', opacity: '0' },
+                '100%': { transform: 'scale(1) translateY(0)', opacity: '1' },
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        overscroll-behavior: none;
+        overflow: hidden;
+        margin: 0;
+        background-color: var(--canvas-bg);
+        transition: background-color 0.3s ease;
+        touch-action: none; /* Critical for custom canvas touch handling */
+        -webkit-font-smoothing: antialiased;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      .scrollbar-hide {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+
+      /* Base Theme Variables */
+      :root {
+        --canvas-bg: #f3f4f6;
+        --surface-bg: #ffffff;
+        --primary-500: #8b5cf6;
+        --primary-600: #7c3aed;
+        --primary-900: #4c1d95;
+        --glow-color: rgba(139, 92, 246, 0.5);
+      }
+
+      /* Theme: Lumina Light */
+      .theme-lumina-light {
+        --canvas-bg: #f3f4f6;
+        --surface-bg: #ffffff;
+        --primary-500: #8b5cf6;
+        --primary-600: #7c3aed;
+        --primary-900: #ddd6fe;
+        --glow-color: rgba(139, 92, 246, 0.5);
+      }
+      
+      /* Theme: Lumina Dark */
+      .theme-lumina-dark {
+        --canvas-bg: #0d1117;
+        --surface-bg: #1f2937; /* Gray 800 */
+        --primary-500: #8b5cf6;
+        --primary-600: #7c3aed;
+        --primary-900: #4c1d95;
+        --glow-color: rgba(139, 92, 246, 0.5);
+      }
+
+      /* Theme: Crimson (Dark Red with Translucent Blocks) */
+      .theme-crimson {
+        --canvas-bg: #110505; /* Deep, almost black red */
+        --surface-bg: rgba(40, 10, 10, 0.8);
+        --primary-500: #ef4444; 
+        --primary-600: #dc2626;
+        --primary-900: #450a0a;
+        --glow-color: rgba(220, 38, 38, 0.3);
+      }
+      
+      /* Overrides for Crimson Blocks to have red tint */
+      .theme-crimson .dark\:bg-gray-800\/95 {
+        background-color: rgba(30, 5, 5, 0.85) !important;
+        border-color: rgba(127, 29, 29, 0.4) !important;
+        backdrop-filter: blur(8px);
+      }
+      .theme-crimson .text-gray-900 { color: #fecaca !important; }
+      .theme-crimson .dark\:text-gray-100 { color: #fecaca !important; }
+      .theme-crimson .text-gray-700 { color: #fca5a5 !important; }
+      .theme-crimson .border-gray-300, 
+      .theme-crimson .dark\:border-gray-700 { border-color: rgba(127, 29, 29, 0.4) !important; }
+
+      /* Theme: Slate (Pure Grayscale) */
+      .theme-slate {
+        --canvas-bg: #0a0a0a; /* Neutral Black */
+        --surface-bg: #171717; /* Neutral Gray 900 */
+        --primary-500: #a1a1aa; /* Zinc 400 (Silver) */
+        --primary-600: #71717a; /* Zinc 500 */
+        --primary-900: #27272a; /* Zinc 800 */
+        --glow-color: rgba(255, 255, 255, 0.1);
+      }
+      
+      /* Overrides for Slate to ensure no blue tint */
+      .theme-slate .dark\:bg-gray-800\/95 {
+        background-color: #171717 !important; /* Pure Gray */
+        border-color: #404040 !important;
+      }
+
+      /* Theme: High Contrast (Pitch Black & Yellow) */
+      .theme-contrast {
+        --canvas-bg: #000000;
+        --surface-bg: #000000;
+        --primary-500: #facc15; /* Yellow 400 */
+        --primary-600: #eab308;
+        --primary-900: #422006;
+        --glow-color: rgba(250, 204, 21, 0.6);
+      }
+      
+      /* Specific Overrides for High Contrast */
+      .theme-contrast .bg-gray-950 { background-color: #000000 !important; }
+      .theme-contrast .bg-white\/95 { background-color: #000000 !important; border: 2px solid #facc15; }
+      .theme-contrast .dark\:bg-gray-800\/95 { background-color: #000000 !important; border: 2px solid #facc15; }
+      .theme-contrast .text-gray-100 { color: #ffffff !important; font-weight: 700; }
+
+      .grid-bg {
+        background-color: var(--canvas-bg);
+        transition: background-color 0.3s ease;
+        /* Subtle noise texture */
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.2.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "uuid": "https://aistudiocdn.com/uuid@^13.0.0",
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
+    "vite": "https://aistudiocdn.com/vite@^7.2.4"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 transition-colors duration-300">
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
